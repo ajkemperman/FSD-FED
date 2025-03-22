@@ -18,7 +18,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { putDataAmenities } from "./Api";
 
-const addEdit = "Add";
+const addEdit = "Edit";
 
 export const AmenitiesPageItem = ({ amenity, properties }) => {
   const {
@@ -134,11 +134,11 @@ export const AmenitiesPageItem = ({ amenity, properties }) => {
       gap={2}
       borderRadius="2xl"
       w="100%"
-      h="100%"
+      h="auto"
       bgColor="gray.100"
       alignItems="flex-start"
       boxShadow="lg" // Large shadow
-      transform="scale(1.0)" // Slight scale effect
+      transform="scale(1.05)" // Slight scale effect
       transition="transform 0.2s ease-in-out"
       _hover={{
         boxShadow: "xl", // Bigger shadow on hover
@@ -148,59 +148,47 @@ export const AmenitiesPageItem = ({ amenity, properties }) => {
         <Text color="gray.700" mb={2}>
           <strong>Name:</strong> {amenity.name}
         </Text>
-        {getPropertiesAmenity()}
-        {
-          <>
-            <Button onClick={handleOpen} colorScheme="green" mt={2}>
-              Edit details amenity
-            </Button>
-            <FormAmenity
-              isOpen={isOpen}
-              onClose={handleClose}
-              formAmenities={formAmenities}
-              amenity={amenity}
-              handleChangeFormAmenities={handleChangeFormAmenities}
-              handleSubmitForm={handleSubmitForm}
-              addEdit={addEdit}
-            />
-            <Button
-              onClick={onDeleteDialogOpen}
-              colorScheme="red"
-              mx={4}
-              mt={2}
-            >
-              Delete this amenity
-            </Button>
 
-            <AlertDialog
-              isOpen={isDeleteDialogOpen}
-              onClose={onDeleteDialogClose}
-            >
-              <AlertDialogOverlay>
-                <AlertDialogContent>
-                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    Delete amenity: {amenity.name}
-                  </AlertDialogHeader>
+        <Button onClick={handleOpen} colorScheme="green" mt={2}>
+          Edit details amenity
+        </Button>
+        <FormAmenity
+          isOpen={isOpen}
+          onClose={handleClose}
+          formAmenities={formAmenities}
+          amenity={amenity}
+          handleChangeFormAmenities={handleChangeFormAmenities}
+          handleSubmitForm={handleSubmitForm}
+          addEdit={addEdit}
+        />
+        <Button onClick={onDeleteDialogOpen} colorScheme="red" mx={4} mt={2}>
+          Delete this amenity
+        </Button>
 
-                  <AlertDialogBody>
-                    Are you sure? You can not undo this action afterwards.
-                  </AlertDialogBody>
+        <AlertDialog isOpen={isDeleteDialogOpen} onClose={onDeleteDialogClose}>
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Delete amenity: {amenity.name}
+              </AlertDialogHeader>
 
-                  <AlertDialogFooter>
-                    <Button onClick={onDeleteDialogClose}>Cancel</Button>
-                    <Button
-                      colorScheme="red"
-                      onClick={() => handleDeleteAmenity(amenity.id)}
-                      ml={3}
-                    >
-                      Delete
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
-            </AlertDialog>
-          </>
-        }
+              <AlertDialogBody>
+                Are you sure? You can not undo this action afterwards.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button onClick={onDeleteDialogClose}>Cancel</Button>
+                <Button
+                  colorScheme="red"
+                  onClick={() => handleDeleteAmenity(amenity.id)}
+                  ml={3}
+                >
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </Box>
     </Flex>
   );
