@@ -137,7 +137,7 @@ export const ReviewsPageItem = ({ review, users, properties }) => {
           <strong>Rating:</strong> {review.rating}
         </Text>
         <Text color="gray.700" mb={2}>
-          <strong>Comment:</strong> ${review.comment}
+          <strong>Comment:</strong> {review.comment}
         </Text>
 
         {
