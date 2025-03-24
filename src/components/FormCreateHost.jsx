@@ -16,12 +16,12 @@ import {
 import { useState } from "react";
 
 export const FormCreateHost = ({
-  isOpen = { isOpen },
-  onClose = { handleClose },
-  formHosts = { formHosts },
-  setFormHosts = { setFormHosts },
-  handleChangeFormHosts = { handleChangeFormHosts },
-  handleSubmitForm = { handleSubmitForm },
+  isOpen,
+  onClose,
+  formHosts,
+  setFormHosts,
+  handleChangeFormHosts,
+  handleSubmitForm,
 }) => {
   // State for validation errors
   const [errors, setErrors] = useState({});

@@ -11,9 +11,12 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { jwtDecode } from "jwt-decode";
+import { putDataLogo } from "../components/Api";
+import { FormLogo } from "../components/FormLogo";
 
 export const Navigation = () => {
   const navigate = useNavigate();
@@ -23,6 +26,44 @@ export const Navigation = () => {
   const [isAuthenticatedHost, setIsAuthenticatedHost] = useState(
     !!localStorage.getItem("tokenHost")
   );
+  const [logo, setLogo] = useState("");
+  const [logoId, setLogoId] = useState("");
+  const [formLogos, setFormLogos] = useState({ image: "" });
+  const [isOpen, setIsOpen] = useState(false);
+  const toast = useToast();
+
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
+
+  const handleSubmitForm = async (e) => {
+    e.preventDefault();
+
+    await putDataLogo(logoId, formLogos, toast, import.meta.env.VITE_API_URL);
+
+    handleClose();
+    console.log(logo);
+    console.log(formLogos);
+
+    setLogo(formLogos.image);
+    navigate("/", { replace: true });
+  };
+
+  useEffect(() => {
+    const loadLogo = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/logos`);
+        if (!response.ok) throw new Error("Failed to fetch logo.");
+        const data = await response.json();
+
+        setLogo(data[0].image);
+        setLogoId(data[0].id);
+        setFormLogos({ image: data[0].image });
+      } catch (error) {
+        console.error("Error loading logo:", error);
+      }
+    };
+    loadLogo();
+  }, []);
 
   useEffect(() => {
     setIsAuthenticated(!!localStorage.getItem("tokenUser"));
@@ -70,14 +111,27 @@ export const Navigation = () => {
         px={4}
       >
         <Image
-          src="../images/logo.jpg"
+          src={logo}
           alt="logo FSD"
           width="30px"
           height="30px"
           borderRadius="2xl"
           objectFit="cover"
         />
-
+        {getUserRole() && (
+          <>
+            <Button colorScheme="red" onClick={handleOpen} size="sm">
+              Change Logo
+            </Button>
+            <FormLogo
+              isOpen={isOpen}
+              onClose={handleClose}
+              formLogos={formLogos}
+              setFormLogos={setFormLogos}
+              handleSubmitForm={handleSubmitForm}
+            />
+          </>
+        )}
         {/* Mobile Dropdown Menu */}
         <Box display={{ base: "block", md: "none" }} position="relative">
           <Menu>

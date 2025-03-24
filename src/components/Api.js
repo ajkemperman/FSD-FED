@@ -412,6 +412,47 @@ export const putDataAmenities = async (amenityId, amenity, toast, BASE_URL) => {
   }
 };
 
+export const putDataLogo = async (logoId, logo, toast, BASE_URL) => {
+  try {
+    let token = localStorage.getItem("tokenUser");
+
+    const response = await fetch(`${BASE_URL}/logos/${logoId}`, {
+      method: "PUT",
+      body: JSON.stringify(logo),
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        authorization: `${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to update logo: ${response.status} ${response.statusText}`
+      );
+    }
+
+    toast({
+      title: "Success!",
+      description: "Updating the logo was successful.",
+      status: "success",
+      duration: 4000,
+      isClosable: true,
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating logo data:", error);
+    toast({
+      title: "Error!",
+      description: "An error occurred while updating logo data.",
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    });
+    return { error: error.message };
+  }
+};
+
 export const putDataBookings = async (bookingId, booking, toast, BASE_URL) => {
   try {
     const formattedBooking = {

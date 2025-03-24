@@ -18,13 +18,13 @@ import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 export const FormUser = ({
-  isOpen = { isOpen },
-  onClose = { handleClose },
-  formUsers = { formUsers },
-  setFormUsers = { setFormUsers },
-  handleChangeFormUsers = { handleChangeFormUsers },
-  handleSubmitForm = { handleSubmitForm },
-  addEdit = { addEdit },
+  isOpen,
+  onClose,
+  formUsers,
+  setFormUsers,
+  handleChangeFormUsers,
+  handleSubmitForm,
+  addEdit,
 }) => {
   // State for validation errors
   const [errors, setErrors] = useState({});
