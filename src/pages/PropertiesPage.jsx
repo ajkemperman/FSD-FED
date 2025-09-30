@@ -197,7 +197,7 @@ export const PropertiesPage = () => {
       </Heading>
 
       <TextInput
-        placeholder=" Search property (name, location)"
+        placeholder=" Search property (name, description, location)"
         onChange={handleChange}
         w={{ base: "90%", md: "50%", lg: "40%" }}
         bg="white"

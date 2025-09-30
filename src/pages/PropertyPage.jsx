@@ -469,7 +469,7 @@ export const PropertyPage = () => {
         >
           {!!localStorage.getItem("tokenUser") && (
             <>
-              <Button onClick={handleOpen} bg="#fd7e14">
+              <Button onClick={handleOpenBooking} bg="#fd7e14">
                 Book this property
               </Button>
               <FormBooking
