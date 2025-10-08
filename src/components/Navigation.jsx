@@ -19,6 +19,7 @@ import { putDataLogo } from "../components/Api";
 import { FormLogo } from "../components/FormLogo";
 
 export const Navigation = () => {
+  const [dateTime, setDateTime] = useState(new Date());
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!localStorage.getItem("tokenUser")
@@ -69,6 +70,15 @@ export const Navigation = () => {
     setIsAuthenticated(!!localStorage.getItem("tokenUser"));
     setIsAuthenticatedHost(!!localStorage.getItem("tokenHost"));
   }, [localStorage.getItem("tokenUser"), localStorage.getItem("tokenHost")]);
+
+  useEffect(() => {
+    // Update every second
+    const timer = setInterval(() => {
+      setDateTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer); // cleanup
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("tokenUser");
@@ -132,6 +142,14 @@ export const Navigation = () => {
             />
           </>
         )}
+        <Box pl="10" mr="1" fontWeight="bold">
+          {dateTime.toLocaleDateString()}
+        </Box>
+        {"|"}
+        <Box ml="1" fontWeight="bold">
+          {dateTime.toLocaleTimeString()}
+        </Box>
+
         {/* Mobile Dropdown Menu */}
         <Box display={{ base: "block", md: "none" }} position="relative">
           <Menu>
