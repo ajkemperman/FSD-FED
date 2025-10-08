@@ -7,7 +7,7 @@ import {
   useToast,
   Box,
 } from "@chakra-ui/react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, Link } from "react-router-dom";
 import { PropertiesPageItem } from "../components/PropertiesPageItem";
 import { useState } from "react";
 import { TextInput } from "../components/ui/TextInput";
@@ -27,19 +27,28 @@ export const loader = async () => {
       `${import.meta.env.VITE_API_URL}/amenities`
     );
     const hostsResponse = await fetch(`${import.meta.env.VITE_API_URL}/hosts`);
-
-    if (!propertiesResponse.ok || !amenitiesResponse.ok || !hostsResponse.ok) {
+    const bookingsResponse = await fetch(
+      `${import.meta.env.VITE_API_URL}/bookings`
+    );
+    if (
+      !propertiesResponse.ok ||
+      !amenitiesResponse.ok ||
+      !hostsResponse.ok ||
+      !bookingsResponse.ok
+    ) {
       throw new Error("Failed to fetch one or more resources.");
     }
 
     const properties = await propertiesResponse.json();
     const amenities = await amenitiesResponse.json();
     const hosts = await hostsResponse.json();
+    const bookings = await bookingsResponse.json();
 
     return {
       properties,
       amenities,
       hosts,
+      bookings,
     };
   } catch (error) {
     console.error("Error loading data:", error);
@@ -47,6 +56,7 @@ export const loader = async () => {
       properties: [],
       amenities: [],
       hosts: [],
+      bookings: [],
       error: error.message,
     };
   }
@@ -54,7 +64,7 @@ export const loader = async () => {
 
 export const PropertiesPage = () => {
   const [searchProperties, setSearchProperties] = useState("");
-  const { properties, amenities, hosts } = useLoaderData();
+  const { properties, amenities, hosts, bookings } = useLoaderData();
   const [isOpen, setIsOpen] = useState(false);
   const [formAmenity, setFormAmenity] = useState([]);
   let navigate = useNavigate();
@@ -180,6 +190,19 @@ export const PropertiesPage = () => {
   const handleChange = (property) => {
     setSearchProperties(property.target.value);
   };
+  const bookingsSort = (bookings) => {
+    const bookingLatest = [...bookings].sort(
+      (a, b) => new Date(b.checkinDate) - new Date(a.checkinDate)
+    );
+
+    const bookingLatestId = bookingLatest[0].propertyId;
+    const bookingLatestDate = bookingLatest[0].checkinDate;
+    const bookingLatestName = properties.find(
+      (property) => property.id === bookingLatestId
+    );
+    return { bookingLatestName, bookingLatestDate, bookingLatestId };
+  };
+
   return (
     <Flex
       direction={"column"}
@@ -189,45 +212,96 @@ export const PropertiesPage = () => {
       justifyContent="center"
       width="100vw"
     >
-      <Heading size="xl" color="white" mb={8}>
-        FSD Booking Website
-      </Heading>
-      <Heading size="xl" color="white" mb={8}>
-        Book your apartment or house
-      </Heading>
-
-      <TextInput
-        placeholder=" Search property (name, description, location)"
-        onChange={handleChange}
-        w={{ base: "90%", md: "50%", lg: "40%" }}
-        bg="white"
-        mb={2}
+      <Box
+        size="md"
+        background="black"
+        color="white"
+        mb={8}
+        borderWidth={2}
+        borderColor="red"
+        borderRadius={10}
         p={2}
-        borderRadius="2xl"
-      />
-      <Text fontSize="20" mr={4} alignContent="center" color="white" mb={2}>
-        Filter on amenities:
-      </Text>
-      <Flex flexWrap="wrap" justifyContent="center" mb={8}>
-        <Box alignContent="center">
-          {amenities.map((amenity) => {
-            return (
-              <Button
-                key={amenity.id}
-                mr={2}
-                onClick={() => setSearchProperties(amenity.id.toString())}
-                textTransform={"capitalize"}
-                fontSize="12"
-              >
-                {amenity.name}{" "}
-              </Button>
-            );
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+      >
+        <Text size="large" style={{ fontWeight: "bold" }}>
+          Latest Booking:
+        </Text>{" "}
+        <Link to={`property/${bookingsSort(bookings).bookingLatestId}`}>
+          <Text
+            size="large"
+            style={{ fontWeight: "bold" }}
+            textDecoration="underline"
+          >
+            {bookingsSort(bookings).bookingLatestName.title}{" "}
+          </Text>
+        </Link>
+        <p>
+          {""}
+          {new Date(
+            bookingsSort(bookings).bookingLatestDate
+          ).toLocaleDateString("nl-NL", {
+            weekday: "long", // maandag, dinsdag, ...
+            day: "numeric", // 7
+            month: "long", // oktober
+            year: "numeric", // 2025
+            hour: "2-digit", // 14
+            minute: "2-digit", // 32
           })}
-          <Button bgColor="yellow.400" onClick={() => setSearchProperties("")}>
-            Reset Search
-          </Button>
-        </Box>
+        </p>
+      </Box>
+      <Flex
+        direction={"column"}
+        bgColor="blue.300"
+        alignItems="center"
+        p={10}
+        justifyContent="center"
+      >
+        <Heading size="xl" color="white" mb={8}>
+          FSD Booking Website
+        </Heading>
+        <Heading size="xl" color="white" mb={8}>
+          Book your apartment or house
+        </Heading>
+
+        <TextInput
+          placeholder=" Search property (name, description, location)"
+          onChange={handleChange}
+          w={{ base: "90%", md: "50%", lg: "40%" }}
+          bg="white"
+          mb={2}
+          p={2}
+          borderRadius="2xl"
+        />
+        <Text fontSize="20" mr={4} alignContent="center" color="white" mb={2}>
+          Filter on amenities:
+        </Text>
+        <Flex flexWrap="wrap" justifyContent="center" mb={8}>
+          <Box alignContent="center">
+            {amenities.map((amenity) => {
+              return (
+                <Button
+                  key={amenity.id}
+                  mr={2}
+                  onClick={() => setSearchProperties(amenity.id.toString())}
+                  textTransform={"capitalize"}
+                  fontSize="12"
+                >
+                  {amenity.name}{" "}
+                </Button>
+              );
+            })}
+            <Button
+              bgColor="yellow.400"
+              onClick={() => setSearchProperties("")}
+            >
+              Reset Search
+            </Button>
+          </Box>
+        </Flex>
       </Flex>
+
       <Flex mb={8}>
         {(getUserRole() || localStorage.getItem("tokenHost")) && (
           <>
