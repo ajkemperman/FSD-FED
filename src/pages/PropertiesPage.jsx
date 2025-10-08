@@ -241,7 +241,7 @@ export const PropertiesPage = () => {
           {""}
           {new Date(
             bookingsSort(bookings).bookingLatestDate
-          ).toLocaleDateString("nl-NL", {
+          ).toLocaleDateString("en-En", {
             weekday: "long", // maandag, dinsdag, ...
             day: "numeric", // 7
             month: "long", // oktober
